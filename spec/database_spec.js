@@ -45,3 +45,25 @@ describe("updateVisitor function", () => {
         expect(update.rowCount).toEqual(1)
         }); 
 })
+
+describe("veiwVisit function", () => {  
+    it("should be able to view a visitor", async function () {
+        let view =  await veiwVisit(4);
+
+        expect(view[0].visitor_name).toBe("Lebo");
+        expect(view[0].visitor_age).toEqual(26);
+        expect(view[0].date_of_visit).toEqual(firstVisitor.date_of_visit);
+        expect(view[0].time_of_visit).toEqual("12:33:00");
+        expect(view[0].assistant_name).toEqual("Romeo");
+        expect(view[0].comments).toEqual("None");
+
+    }); 
+});
+
+describe("emptyVisits function", function() { 
+    it("should be able to delete all visitors", async function (done) {
+
+        expect(await emptyVisits()).not.toBeNull();
+        done();
+    });
+});
