@@ -1,115 +1,93 @@
-require('dotenv').config();
 const { Client } = require('pg');
-const client = new Client();
+const client = new Client({
+  user: "user",
+  host: "localhost",
+  database: "socials",
+  password: "pass",
+  port: 5432
+});
 
-const createTable = async function() {
+client.connect(); // Making a connection between with the database
+
+const addNewVisitor = async (name, age, visit_date, visit_time, assistant, comments) => {
   try {
-    const sql = await client.query(
-      `CREATE TABLE IF NOT EXISTS 
-           Visitors(
-            ID SERIAL PRIMARY KEY,
-            Visitor_Name VARCHAR(100),
-            Assistant_Name VARCHAR(100),
-            Visitor_Age INTEGER,
-            Date_Of_Visit DATE,
-            Time_Of_Visit TIME,
-            Comments VARCHAR(225)
-        );`
+    let results = await client.query(
+      `INSERT INTO visitors(
+            
+            Visitor_Name,
+            Visitor_Age,
+            Date_Of_Visit,
+            Time_Of_Visit,
+            Assistant_Name,
+            Comments
+        ) values ($1, $2,$3, $4, $5, $6) returning *;`,
+      [name, age,visit_date, visit_time, assistant, comments]
     );
-    // console.log(sql.rows)
-  } catch (e) {
-    console.log(e);
-  }
-};
-createTable();
-
-const addNewVisitor = async function(
-  Name,
-  Age,
-  date,
-  Time,
-  Assistant,
-  Comments
-) {
-  try {
-    const sql =
-      'INSERT INTO Visitors(Visitor_Name, Visitor_Age, Date_Of_Visit, Time_Of_Visit, Assistant_Name, Comments) VALUES ($1, $2, $3, $4, $5, $6)  RETURNING *';
-    const data = [Name, Age, date, Time, Assistant, Comments];
-
-    let results = await client.query(sql, data);
-    return results.rows;
-  } catch (error) {
-    console.log(error);
-  }
-};
-addNewVisitor();
-
-const listVisitors = async function() {
-  const sql = 'Select ID, Visitor_Name FROM Visitors';
-
-  try {
-    results = await client.query(sql);
 
     return results.rows;
+
   } catch (error) {
-    console.log(error);
+      throw error;
   }
+
 };
 
-const deleteVisitor = async function(ID) {
-  const sql = 'DELETE FROM Visitors WHERE ID= $1';
-  const data = [ID];
-
+const listAllVisits = async() => {
+  const SQL = `SELECT visitor_ID, visitor_name FROM visitors;`
   try {
-    results = await client.query(sql, data);
-
-    return results;
+      query = await client.query(SQL);
+      return query.rows;
   } catch (error) {
-    console.log(error);
+      throw error;
   }
 };
 
-const updateVisitor = async function(
-  ID,
-  Name,
-  Age,
-  date,
-  Time,
-  Assistant,
-  Comments
-) {
-  const sql =
-    'UPDATE Visitors SET Visitor_Name= $2, Visitor_Age= $3, Date_Of_Visit= $4, Time_Of_Visit= $5, Assistant_Name= $6, Comments= $7 Where ID= $1';
-  const data = [ID, Name, Age, date, Time, Assistant, Comments];
-
+const deleteVisit = async(id) => {
   try {
-    results = await client.query(sql, data);
-
-    return results;
+      let deleted = await client.query(`DELETE FROM visitors WHERE visitor_ID=$1;`, [id]);
+      return deleted;
   } catch (error) {
-    console.log(error);
+      throw error;
   }
 };
 
-const viewVisitor = async (ID) => {
-  const sql = 'SELECT * FROM Visitors WHERE ID= $1 ';
-  const data = [ID];
-
+const updateVisit = async(id, where, value) => {
   try {
-    results = await pool.query(sql, data);
-
-    return results.rows;
+      let updated = await client.query(`UPDATE visitors SET ${where}= $2 WHERE visitor_ID=$1;`, [id, value]);
+      return updated;
   } catch (error) {
-    console.log(error);
+      throw error;
   }
 };
-const dropVisitors = async function() {
-  const sql = 'DELETE FROM Visitors';
 
+const veiwVisit = async(id) => {
   try {
-    results = await pool.query(sql);
-    return results.rows;
+      const query = await client.query(`SELECT * FROM visitors WHERE visitor_ID=$1;`, [id]);
+      return query.rows;
   } catch (error) {
-    console.log(error);
+      throw error;
   }
 };
+
+const emptyVisits = async() => {
+  try {
+      let emptied = await client.query('DELETE FROM visitors;');
+      return emptied;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+};
+
+module.exports = {
+  addNewVisitor,
+  listAllVisits,
+  emptyVisits,
+  veiwVisit,
+  updateVisit,
+  deleteVisit,
+}
+
+// addNewVisitor('Teboho', 22, '12/12/2012', '12:12', 'Ofentse', 'Was working with Ofentse :D');
+// addNewVisitor('Lebogang', 22, '12/12/2012', '12:12', 'Romeo', 'Only person who pays attention :D');
+
