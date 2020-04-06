@@ -29,37 +29,6 @@ describe("AddNewVisitor function", () => {
     })
 })
 
-describe("listAllVisits function", () => {
-    it("list all visitors from a visitors table", async() => {
-        results = await listAllVisits();
-        expect(results[0].visitor_name).toEqual("Lebo");
-    })
-})
-
-describe("updateVisitor function", () => {
-    it("should be able to update visitor's details", async () => {
-
-        let update = await updateVisit("Ofentse", 26, "08/12/2020", "11:22:00", "Assistant", "No Comments");
-        
-        expect(update.command).toEqual('Update');
-        expect(update.rowCount).toEqual(1)
-        }); 
-})
-
-describe("veiwVisit function", () => {  
-    it("should be able to view a visitor", async function () {
-        let view =  await veiwVisit(4);
-
-        expect(view[0].visitor_name).toBe("Lebo");
-        expect(view[0].visitor_age).toEqual(26);
-        expect(view[0].date_of_visit).toEqual(firstVisitor.date_of_visit);
-        expect(view[0].time_of_visit).toEqual("12:33:00");
-        expect(view[0].assistant_name).toEqual("Romeo");
-        expect(view[0].comments).toEqual("None");
-
-    }); 
-});
-
 describe("emptyVisits function", function() { 
     it("should be able to delete all visitors", async function (done) {
 

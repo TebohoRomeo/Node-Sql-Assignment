@@ -2,7 +2,7 @@
 Drop table if exists visitors;
 Create Table visitors
 (
-    visitor_ID serial primary key,
+    visitor_id serial primary key,
     visitor_name varchar(100),
     visitor_age integer,
     date_of_visit date,

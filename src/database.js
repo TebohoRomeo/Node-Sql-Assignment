@@ -13,14 +13,13 @@ const addNewVisitor = async (name, age, visit_date, visit_time, assistant, comme
   try {
     let results = await client.query(
       `INSERT INTO visitors(
-            
-            Visitor_Name,
-            Visitor_Age,
-            Date_Of_Visit,
-            Time_Of_Visit,
-            Assistant_Name,
-            Comments
-        ) values ($1, $2,$3, $4, $5, $6) returning *;`,
+        Visitor_Name,
+        Visitor_Age,
+        Date_Of_Visit,
+        Time_Of_Visit,
+        Assistant_Name,
+        Comments
+        ) values ($1, $2,$3, $4, $5, $6) returning *;`, 
       [name, age,visit_date, visit_time, assistant, comments]
     );
 
